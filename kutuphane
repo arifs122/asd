@@ -1,0 +1,417 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdbool.h>
+struct KitapBilgileri{
+    int kitapid;
+    char kitapadi[40];
+    char yazaradi[40];
+    bool mevcut;
+}kitap;
+struct UyeBilgileri{
+    int uyeid;
+    char uyeadi[40];
+    int telefonno;
+}uye;
+struct OduncBilgileri{
+    int odunckitapid;
+    int oduncalanid;
+    int oduncalmatarihi;
+    int iadetarihi;
+}odunc;
+
+/*menu işlemleri*/
+void Menu();
+void KitapYonetimiMenu();
+void UyeYonetimiMenu();
+void OduncIslemleriMenu();
+void RaporlamaMenu();
+/*kitap yönetimi*/
+void KitapEkle();
+void KitapSil();
+void KitapAra();
+void KitaplariListele();
+/*üye yönetimi*/
+void UyeEkle();
+void UyeAra();
+void UyeListele();
+/*ödünç işlemleri*/
+void KitapOduncVer();
+void KitapIadeAl();
+void OduncListesi();
+/*raporlama işlemleri*/
+void MevcutKitaplariListele();
+void OduncVerilenKitaplariListele();
+
+void KitapGuncelle();
+
+int main(){
+    int kitapsayisi=5;
+    int oduncsayisi=5;
+    int uyesayisi=5;
+    int *kitapsayisiPtr = &kitapsayisi;
+    int *oduncsayisiPtr = &oduncsayisi;
+    int *uyesayisiPtr = &uyesayisi;
+    int kitapsayac=0;
+    int oduncsayac=0;
+    int uyesayac=0;
+
+    struct KitapBilgileri *kitap = (struct KitapBilgileri*)malloc(sizeof(struct KitapBilgileri)*(*kitapsayisiPtr));
+    struct UyeBilgileri *uye = (struct UyeBilgileri*)malloc(sizeof(struct UyeBilgileri)*(*uyesayisiPtr));
+    struct OduncBilgileri *odunc = (struct OduncBilgileri*)malloc(sizeof(struct OduncBilgileri)*(*oduncsayisiPtr));
+
+    int menusecim;
+    do
+    {
+        Menu(&menusecim);
+        switch (menusecim)
+        {
+            int menusecim2;
+        case 0:
+            printf("Cikis yapiliyor...");
+            break;
+        case 1:
+            KitapYonetimiMenu(&menusecim2);
+            switch (menusecim2)
+            {
+            case 1:
+                KitapEkle(&kitapsayac, &(kitap[kitapsayac].kitapid), &(kitap[kitapsayac].kitapadi), &(kitap[kitapsayac].yazaradi), &(kitap[kitapsayac].mevcut),kitapsayisiPtr ,&kitap);
+                break;
+            case 2:
+                KitapSil(&kitapsayac,&kitap);
+                break;
+            case 3:
+                KitapAra(&kitapsayac,&kitap);
+                break;
+            case 4:
+                KitaplariListele(&kitapsayac);
+                break;
+            case 0:
+            printf("Menuye donuluyor...\n");
+                break;
+            default:
+                printf("Gecersiz deger girdiniz.Menuye donuluyor.\n");
+                break;
+            }
+            break;
+        case 2:
+            UyeYonetimiMenu(&menusecim2);
+            switch (menusecim2)
+            {
+            case 1:
+                UyeEkle(&uyesayac, &(uye[uyesayac].uyeid),&(uye[uyesayac].uyeadi),&(uye[uyesayac].telefonno),uyesayisiPtr, &uye);
+                break;
+            case 2:
+                UyeAra();
+                break;
+            case 3:
+                UyeListele();
+                break;
+            case 0:
+                printf("Menuye donuluyor...\n");
+                break;    
+            default:
+                printf("Gecersiz deger girdiniz.Menuye donuluyor.\n");
+                break;
+            }
+            break;
+        case 3:
+            OduncIslemleriMenu(&menusecim2);
+            switch (menusecim2)
+            {
+            case 1:
+                KitapOduncVer();
+                break;
+            case 2:
+                KitapIadeAl();
+                break;
+            case 3:
+                OduncListesi();
+                break;
+            case 0:
+                printf("Menuye donuluyor...\n");
+                break;
+            default:
+                printf("Gecersiz deger girdiniz.Menuye donuluyor.\n");
+                break;
+            }
+            break;
+        case 4:
+            RaporlamaMenu(&menusecim2);
+            switch (menusecim2)
+            {
+            case 1:
+                MevcutKitaplariListele();
+                break;
+            case 2:
+                OduncVerilenKitaplariListele();
+                break;
+            case 0:
+                printf("Menuye donuluyor...\n");
+                break;
+            default:
+                printf("Gecersiz deger girdiniz.Menuye donuluyor.\n");
+                break;
+            }
+            break;
+       
+        default:
+            printf("Gecersiz deger girdiniz.Menuye donuluyor.\n");
+            break;
+        }
+    } while (menusecim != 0);
+    
+    free(uye);
+    free(kitap);
+    free(odunc);
+
+    return 0;
+}
+
+void Menu(int *menusecim){
+    printf("---Kutuphane Yonetim Sistemi---\n");
+    printf("0- Cikis\n");
+    printf("1- Kitap Yonetimi\n");
+    printf("2- Uye Yonetimi\n");
+    printf("3- Odunc Islemleri\n");
+    printf("4- Raporlama\n");
+    printf("Yapmak istediginiz islemi giriniz: \n");
+    scanf("%d" ,menusecim);
+
+}
+void KitapYonetimiMenu(int *menusecim2){
+    printf("***Kitap Yonetimi***\n");
+    printf("0- Cikis \n1-Kitap ekle \n2-Kitap sil \n3-Kitap ara \n4-Kitap listele\n");
+    printf("Yapmak istediginiz islemi giriniz: \n");
+    scanf("%d" ,menusecim2);
+}
+void UyeYonetimiMenu(int *menusecim2){
+    printf("***Uye Yonetimi***\n");
+    printf("0- Cikis \n1- Uye Ekle \n2- Uye Ara \n3- Uye Listele\n");
+    printf("Yapmak istediginiz islemi giriniz: \n");
+    scanf("%d" ,menusecim2);
+}
+void OduncIslemleriMenu(int *menusecim2){
+    printf("***Odunc Islemleri***\n");
+    printf("0- Cikis \n1- Kitap Odunc Alma \n2- Kitap Iade et \n3- Odunc Alinan Kitaplar Listesi\n");
+    printf("Yapmak istediginiz islemi giriniz: \n");
+    scanf("%d" ,menusecim2);
+}
+void RaporlamaMenu(int *menusecim2){
+    printf("***Raporlama***\n");
+    printf("0- Cikis \n1- Mevcut Kitaplari Listele \n2- Oduncteki Kitaplari Listele\n");
+    printf("Yapmak istediginiz islemi giriniz: \n");
+    scanf("%d" ,menusecim2);
+}
+void KitapEkle(int *kitapsayac, int *kitapid, char *kitapadi, char *yazaradi, bool *mevcut, int *kitapsayisiPtr, struct KitapBilgileri **kitap){
+    FILE *file = fopen("kitaplar.txt" ,"a");
+    if (file == NULL) {
+        printf("Dosya acilamadi.\n");
+        return;
+    }
+    printf("Eklemek istediginiz kitabin kimlik numarasini giriniz: ");
+    scanf("%d" ,&kitapid);
+    while (getchar() != '\n');
+    printf("Eklemek istediginiz kitabin adini giriniz: ");
+    fgets(kitapadi,40,stdin);
+    kitapadi[strcspn(kitapadi, "\n")] = 0;
+    printf("Eklemek istediginiz kitabin yazarinin adini giriniz: ");
+    fgets(yazaradi,40,stdin);
+    yazaradi[strcspn(yazaradi, "\n")] = 0;
+    *mevcut = true;
+    fprintf(file ,"Kitap ID: %d \nKitap Adi: %s \nYazar Adi: %s \nDurum(1:Mevcut 0:Mevcut degil): %d \n" ,kitapid,kitapadi,yazaradi, *mevcut);
+    fclose(file);
+    (*kitapsayac)++;
+    if ((*kitapsayac) == (*kitapsayisiPtr))
+    {
+        *kitapsayisiPtr *= 2;  
+        *kitap = (struct KitapBilgileri*)realloc(kitap, sizeof(struct KitapBilgileri) * (*kitapsayisiPtr));
+    }
+    
+}
+void KitapSil(int *kitapsayac,struct KitapBilgileri **kitap){
+     
+}
+void KitapAra(int *kitapsayac,struct KitapBilgileri **kitap){
+    FILE *file = fopen("kitaplar.txt", "r");
+    if(file == NULL){
+        printf("Dosya acilamadi.\n");
+        return;
+    }
+
+    printf("Aramak istediginiz kitabin ID'sini giriniz: \n");
+    int tempid;
+    scanf("%d", &tempid);
+
+    char buffer[500];
+    bool kitapidvarmi = false;
+    while(fgets(buffer, sizeof(buffer), file)){
+        if(strstr(buffer, "Kitap ID:")){
+            int kitapid;
+            sscanf(buffer, "Kitap ID: %d", &kitapid);
+            if(kitapid == tempid){
+                kitapidvarmi = true;
+                printf("Kitap bulundu!\n");
+                printf("%s", buffer);
+                for(int i = 0; i < 3; i++){
+                    if(fgets(buffer, sizeof(buffer), file)){
+                        printf("%s", buffer);
+                    }
+                }
+                break;
+            }
+        }
+    }
+
+    if(!kitapidvarmi){
+        printf("Kitap bulunamadi.\n");
+    }
+    fclose(file);
+}
+void KitaplariListele(int *kitapsayac){
+    FILE *file = fopen("kitaplar.txt", "r");
+    if(file == NULL){
+        printf("Dosya acilamadi.\n");
+        return;
+    }
+    char buffer[500];
+    while(fgets(buffer, sizeof(buffer), file)){
+        if(strstr(buffer, "Kitap ID:")){
+            printf("%s", buffer);
+            for(int i = 0; i < 3; i++){
+                if(fgets(buffer, sizeof(buffer), file)){
+                    printf("%s", buffer);
+                }
+            }
+            printf("\n");
+        }
+    }
+
+    fclose(file);
+}
+
+void UyeEkle(int *uyesayac,int *uyeid, char *uyead, int *telefonno, int *uyesayisiPtr, struct UyeBilgileri **uye){
+    FILE *file = fopen("uyeler.txt", "a");
+    if(file == NULL){
+        printf("Dosya acilamadi.\n");
+        return;
+    }
+    bool kimlikbasamak = false;
+    do
+    {
+    int basamak = 0;
+    printf("Uyenin kimlik numarasini giriniz(11 haneli olmalidir):\n");
+    scanf("%d" ,uyeid);
+    while(getchar() != '\n');
+    int tempUyeid = *uyeid;
+    while(tempUyeid !=0)
+    {
+        tempUyeid /= 10;
+        basamak++;
+    }
+    if(basamak != 11){
+        printf("Kimlik numarasi 11 haneli olmalidir.Tekrar deneyin.\n");
+    }else{
+        kimlikbasamak = true;
+    }
+    }while(kimlikbasamak == false);
+    printf("Uyenin adini giriniz:\n");
+    fgets(uyead, 40, stdin);
+    uyead[strcspn(uyead, "\n")] = 0;
+    printf("Uyenin telefon numarasini giriniz: \n");
+    scanf("%d" ,telefonno);
+    fprintf(file ,"Uye Bilgileri:\nUye ID: %d \nUye Adi: %s \nTelefon Numarasi: %d" ,uyeid,uyead,telefonno);
+    fclose(file);
+    (*uyesayac)++;
+    if((*uyesayac) == (*uyesayisiPtr)){
+        *uyesayisiPtr *= 2;
+        *uye = (struct UyeBilgileri*)realloc(uye,sizeof(struct UyeBilgileri) * (*uyesayisiPtr));
+    }
+    
+}
+void UyeAra(){
+    FILE *file = fopen("uyeler.txt", "r");
+    if(file == NULL){
+        printf("Dosya acilamadi.\n");
+    }
+    printf("Aramak istediginiz uyenin ID'sini giriniz: \n");
+    int tempid;
+    scanf("%d" ,&tempid);
+
+    char buffer[500];
+    bool uyeidvarmi = false;
+    while(fgets(buffer, sizeof(buffer),file))
+    {
+        if (strstr(buffer, "Uye ID:")){
+            int uyeid;
+            sscanf(buffer, "Uye ID: %d", &uyeid);
+            if(uyeid == tempid){
+            
+                uyeidvarmi = true;
+                printf("Uye bulundu! \n");
+                printf("%s" ,buffer);
+                for(int i = 0; i < 2; i++)
+                {
+                    if(fgets(buffer, sizeof(buffer), file)){
+                        printf("%s" ,buffer);
+                    }
+                    
+                }
+                break; 
+            }
+            
+        }
+        
+    }
+    
+    if(!uyeidvarmi){
+        printf("Uye bulunamadi. \n");
+    }
+    fclose(file);
+}
+void UyeListele(){
+    FILE *file = fopen("uyeler.txt", "r");
+    if(file == NULL){
+        printf("Dosya Acilamadi");
+    }
+    char buffer[500];
+    while(fgets(buffer, sizeof(buffer) ,file))
+    {
+        if (strstr(buffer , "Uye ID:"))
+        {
+            printf("&s" ,buffer);
+            for(int i = 0; i < 2; i++)
+            {
+                if(fgets(buffer, sizeof(buffer), file)){
+                    printf("%s" ,buffer);
+                }
+                
+            }
+            
+        }
+        
+    }
+    fclose(file);
+}
+
+void KitapOduncVer(){
+}
+void KitapIadeAl(){}
+void OduncListesi(){}
+
+void MevcutKitaplariListele(){}
+void OduncVerilenKitaplariListele(){}
+
+
+
+void KitapGuncelle( int kitapsayac , struct KitapBilgileri *kitap) {
+    FILE *file = fopen("kitaplar.txt", "w");
+    if(file == NULL){
+        printf("Dosya acilamadi.\n");
+        return;
+    }
+    for(int i = 0; i < kitapsayac; i++){
+        fprintf(file, "Kitap Bilgileri:\nKitap ID: %d\nKitap Adi: %s\nYazar Adi: %s\nDurum: %s\n", kitap[i].kitapid, kitap[i].kitapadi, kitap[i].yazaradi, kitap[i].mevcut);
+    }
+    fclose(file);
+}
